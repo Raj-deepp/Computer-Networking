@@ -6,7 +6,6 @@
 // };
 
 #include <stdio.h>
-#include <stdlib.h>
 
 struct pkt {
     char ch1;

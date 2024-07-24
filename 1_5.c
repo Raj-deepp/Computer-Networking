@@ -1,7 +1,6 @@
 // Write a C program to check whether the Host machine is in Little Endian or Big Endian. Enter a number, print the content of each byte location and Convert the Endianness of the same i.e. Little to Big Endian and vice-versa.
 
 #include <stdio.h>
-#include <stdint.h>
 
 void print(int num) {
     unsigned char byte1 = (num & 255);

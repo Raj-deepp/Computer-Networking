@@ -1,5 +1,3 @@
-#include<stdio.h>
-
 /*Write a C program to assign values to each member of the following structure. 
 Pass the populated structure to a function Using call-by-value and another function using call-by-address and print the value of each member of the structure.
 struct student_info{
@@ -8,6 +6,8 @@ char name [50];
 float CGPA;
 struct dob age;
 };*/
+
+#include<stdio.h>
 
 struct dob{
     int dd;
@@ -27,7 +27,7 @@ void callByValue(struct student_info s){
     printf("Roll No.: %d\n",s.roll_no);
     printf("Name: %s\n",s.name);
     printf("CGPA: %f\n",s.CGPA);
-    printf("DOB: %d-%d-*%d\n",s.d.dd,s.d.mm,s.d.year);
+    printf("DOB: %d-%d-%d\n",s.d.dd,s.d.mm,s.d.year);
 }
 
 void callByRefernce(struct student_info *s){
