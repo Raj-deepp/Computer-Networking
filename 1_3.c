@@ -3,23 +3,18 @@
 #include <stdio.h>
 
 int main() {
-    int number;
-    char byte1, byte2, byte3, byte4;
-
-    // Prompt user for input
+    int num;
     printf("Enter a number: ");
-    scanf("%u", &number);
+    scanf("%d", &num);
+    
+    unsigned char b1 = (num & 255);
+    unsigned char b2 = (num >> 8) & 255;
+    unsigned char b3 = (num >> 16) & 255;
+    unsigned char b4 = (num >> 24) & 255;
 
-    // Extract each byte
-    byte1 = (number >> 24) & 0xFF;
-    byte2 = (number >> 16) & 0xFF;
-    byte3 = (number >> 8) & 0xFF;
-    byte4 = number & 0xFF;
-
-    // Print the content of each byte
-    printf("Byte 1: 0x%02X\n", byte1);
-    printf("Byte 2: 0x%02X\n", byte2);
-    printf("Byte 3: 0x%02X\n", byte3);
-    printf("Byte 4: 0x%02X\n", byte4);
+    printf("B1: %u\n", b1);
+    printf("B2: %u\n", b2);
+    printf("B3: %u\n", b3);
+    printf("B4: %u\n", b4);
     return 0;
 }
