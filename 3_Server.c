@@ -1,101 +1,57 @@
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <netinet/in.h> //structure for storing address information 
-#include <sys/socket.h> //for socket APIs 
-#include <sys/types.h> 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 int main(int argc, char const* argv[]) 
-{ 
+{
+    // Create server socket
+    int servSockD = socket(AF_INET, SOCK_STREAM, 0);
+    if (servSockD < 0) {
+        perror("Socket creation failed");
+        exit(EXIT_FAILURE);
+    }
 
-	// create server socket similar to what was done in 
-	// client program 
-	int servSockD = socket(AF_INET, SOCK_STREAM, 0); 
+    // String to store data to send to client
+    char serMsg[255] = "Message from the server to the client 'Hello Client'";
 
-	// string store data to send to client 
-	char serMsg[255] = "Message from the server to the "
-					"client \'Hello Client\' "; 
+    // Define server address
+    struct sockaddr_in servAddr;
+    servAddr.sin_family = AF_INET;
+    servAddr.sin_port = htons(9001);
+    servAddr.sin_addr.s_addr = INADDR_ANY;
 
-	// define server address 
-	struct sockaddr_in servAddr; 
+    // Bind socket to the specified IP and port
+    if (bind(servSockD, (struct sockaddr*)&servAddr, sizeof(servAddr)) < 0) {
+        perror("Bind failed");
+        close(servSockD);
+        exit(EXIT_FAILURE);
+    }
 
-	servAddr.sin_family = AF_INET; 
-	servAddr.sin_port = htons(9001); 
-	servAddr.sin_addr.s_addr = INADDR_ANY; 
+    // Listen for connections
+    if (listen(servSockD, 1) < 0) {
+        perror("Listen failed");
+        close(servSockD);
+        exit(EXIT_FAILURE);
+    }
 
-	// bind socket to the specified IP and port 
-	bind(servSockD, (struct sockaddr*)&servAddr, 
-		sizeof(servAddr)); 
+    // Accept incoming connection
+    int clientSocket = accept(servSockD, NULL, NULL);
+    if (clientSocket < 0) {
+        perror("Accept failed");
+        close(servSockD);
+        exit(EXIT_FAILURE);
+    }
 
-	// listen for connections 
-	listen(servSockD, 1); 
+    // Send message to client
+    send(clientSocket, serMsg, sizeof(serMsg), 0);
 
-	// integer to hold client socket. 
-	int clientSocket = accept(servSockD, NULL, NULL); 
+    // Close sockets
+    close(clientSocket);
+    close(servSockD);
 
-	// send's messages to client socket 
-	send(clientSocket, serMsg, sizeof(serMsg), 0); 
-
-	return 0; 
+    return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
