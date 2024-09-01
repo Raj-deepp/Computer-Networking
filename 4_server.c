@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     int port = atoi(argv[1]);
 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-    {
+    {   ```````1
         perror("Socket creation failed");
         exit(EXIT_FAILURE);
     }
