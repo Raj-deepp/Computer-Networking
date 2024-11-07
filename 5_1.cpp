@@ -21,14 +21,15 @@ void handleClient(int clientSocket) {
 
         // Receive message from client
         int bytesReceived = recv(clientSocket, buffer, BUFFER_SIZE, 0);
-        if (bytesReceived <= 0) {
-            cout << "Client disconnected or error in receiving data." << endl;
+        if (bytesReceived < 0) {
+            perror("Error receiving data");
+            break;
+        } else if (bytesReceived == 0) {
+            cout << "Client disconnected." << endl;
             break;
         }
         cout << "Received " << bytesReceived << " bytes from client." << endl;
-
-        // Display received message
-        cout << "Client: " << buffer << endl;
+        cout << "Message from client: " << buffer << endl;
 
         // Check for "logout" message
         if (strncmp(buffer, "logout", 6) == 0) {
@@ -38,8 +39,8 @@ void handleClient(int clientSocket) {
 
         // Echo back the message to the client
         int bytesSent = send(clientSocket, buffer, strlen(buffer), 0);
-        if (bytesSent <= 0) {
-            cout << "Error in sending data to client." << endl;
+        if (bytesSent < 0) {
+            perror("Error sending data to client");
             break;
         }
         cout << "Sent " << bytesSent << " bytes back to client." << endl;
