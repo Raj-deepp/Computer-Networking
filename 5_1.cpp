@@ -1,5 +1,3 @@
-//Design a connection oriented concurrent chat server using fork ()
-
 #include <iostream>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -9,6 +7,7 @@
 #include <cstdlib>
 #include <sys/wait.h>
 #include <csignal>
+
 using namespace std;
 
 #define PORT 8080
@@ -23,9 +22,10 @@ void handleClient(int clientSocket) {
         // Receive message from client
         int bytesReceived = recv(clientSocket, buffer, BUFFER_SIZE, 0);
         if (bytesReceived <= 0) {
-            cout << "Client disconnected." << endl;
+            cout << "Client disconnected or error in receiving data." << endl;
             break;
         }
+        cout << "Received " << bytesReceived << " bytes from client." << endl;
 
         // Display received message
         cout << "Client: " << buffer << endl;
@@ -37,9 +37,15 @@ void handleClient(int clientSocket) {
         }
 
         // Echo back the message to the client
-        send(clientSocket, buffer, strlen(buffer), 0);
+        int bytesSent = send(clientSocket, buffer, strlen(buffer), 0);
+        if (bytesSent <= 0) {
+            cout << "Error in sending data to client." << endl;
+            break;
+        }
+        cout << "Sent " << bytesSent << " bytes back to client." << endl;
     }
     close(clientSocket);
+    cout << "Closed connection with client." << endl;
     exit(0); // Exit child process
 }
 
@@ -58,6 +64,7 @@ int main() {
         perror("Socket creation failed");
         exit(EXIT_FAILURE);
     }
+    cout << "Socket created successfully." << endl;
 
     // Configure server address
     serverAddr.sin_family = AF_INET;
@@ -70,6 +77,7 @@ int main() {
         close(serverSocket);
         exit(EXIT_FAILURE);
     }
+    cout << "Socket bound to port " << PORT << "." << endl;
 
     // Start listening for incoming connections
     if (listen(serverSocket, 5) < 0) {
@@ -77,7 +85,6 @@ int main() {
         close(serverSocket);
         exit(EXIT_FAILURE);
     }
-
     cout << "Server is listening on port " << PORT << "..." << endl;
 
     // Set up signal handling to clean up child processes
@@ -91,7 +98,7 @@ int main() {
             continue;
         }
 
-        cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) <<":"<< ntohs(clientAddr.sin_port) << endl;
+        cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << ":" << ntohs(clientAddr.sin_port) << endl;
 
         // Create a new process for each client
         if (fork() == 0) {  // Child process
